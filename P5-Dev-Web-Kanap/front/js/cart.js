@@ -3,27 +3,26 @@ let cart = JSON.parse(localStorage.getItem("cart"));// recuperation du panier
 let products = [];
 let contact = {};
 
-//création d'éléments du DOM(à améliorer en ajoutant attributs)
-function createEl(el){
-    return document.createElement(el);
-}
+
+
+
 //creation des articles et placement
 function display() {
     cart.forEach(product => {
-        let article     = createEl("article");
-        let div1        = createEl("div");
-        let img         = createEl("img");
-        let div2        = createEl("div");
-        let div2_1      = createEl("div");
-        let h2          = createEl("h2");
-        let p2_1        = createEl("p");
-        let div2_2      = createEl("div"); 
-        let div2_2_1    = createEl("div");
-        let p2_2_1      = createEl("p");
-        let input2_2_1  = createEl("input");
-        let div2_2_2    = createEl("div");
-        let p2_2_2      = createEl("p");
-        let p2_2_0      = createEl("p");
+        let article     = document.createElement("article");
+        let div1        = document.createElement("div");
+        let img         = document.createElement("img");
+        let div2        = document.createElement("div");
+        let div2_1      = document.createElement("div");
+        let h2          = document.createElement("h2");
+        let p2_1        = document.createElement("p");
+        let div2_2      = document.createElement("div"); 
+        let div2_2_1    = document.createElement("div");
+        let p2_2_1      = document.createElement("p");
+        let input2_2_1  = document.createElement("input");
+        let div2_2_2    = document.createElement("div");
+        let p2_2_2      = document.createElement("p");
+        let p2_2_0      = document.createElement("p");
 
         article.className   = "cart__item";
         article.setAttribute ("data-id", product.productId);
@@ -61,28 +60,81 @@ function display() {
                     div2_2.append(div2_2_2);
                         div2_2_2.append(p2_2_2);
 
-    let urlKanaps = `${module.urlApi}/${product.productId}`;
-    module.getKanapsFromApi(urlKanaps)
+    let urlKanap = `${module.urlApi}/${product.productId}`;
+    module.fetchApi(urlKanap)
     .then(result => {
             img.src = result.imageUrl;
             img.alt = result.altTxt;
             h2.textContent     = result.name;
             p2_1.textContent   = result.price + ',00 €';
-            // p2_1.setAttribute  ("data-price", result.price);            
     })
-    .catch(err => {
-        document.querySelector('section').textContent = 
-        "Oups... Désolé un problème est survenu, merci de réessayer plus tard";
-        document.querySelector('section').style.fontSize = '24px';
-    })
+    .catch(() => 
+        document.querySelector('section').innerHTML = 
+        "<h2>Oups... Désolé un problème est survenu, merci de réessayer plus tard </h2>"
+    )
 }) 
 }
-display();
 
-module.deleteArticle(cart);//suppression article
-module.quantityChange(cart);//changement quantité
-module.quantityTotal();//calcul quantité total
-module.priceTotal(cart);//calcul prix total
+// suppression d un article
+function deleteArticle(cart) {
+    var art = document.getElementsByClassName('deleteItem');
+    for(var i = 0; i < art.length; i++) {
+        (function(index) {
+            art[index].addEventListener("click", () => {
+                let deleteItem = art[index].closest("article");
+                let indexDeleteItem = deleteItem.dataset.index;
+                cart.splice(indexDeleteItem, 1 );
+                localStorage.setItem("cart", JSON.stringify(cart)); 
+                cart = JSON.parse(localStorage.getItem("cart"));
+                location.reload();     
+            })
+        })(i);
+    }
+}
+
+//changement quantité
+function quantityChange(cart) {
+    var qte = document.getElementsByClassName('itemQuantity');
+    for(var i = 0; i < qte.length; i++) {
+        (function(index) {
+            qte[index].addEventListener("change", (e) => {
+                let qteItem = qte[index].closest("article");
+                let indexQteItem = qteItem.dataset.index;
+                cart[indexQteItem].quantity = e.target.value;
+                localStorage.setItem("cart", JSON.stringify(cart)); 
+
+                quantityTotal();
+                priceTotal(cart);
+            })
+        })(i);
+    }
+}
+
+//calcul de la quantité
+function quantityTotal() {
+    let qte = document.getElementsByClassName('itemQuantity');
+    let qteTotal = 0 ;
+    for(var i = 0; i < qte.length; i++) {
+            qteTotal += parseInt(qte[i].value);
+            document.getElementById('totalQuantity').textContent = qteTotal;
+    }    
+}
+
+//prix total
+function priceTotal(cart) {
+    const totalPrice = cart.map(item => item.price*item.quantity).reduce((prev, curr) => prev + curr, 0);
+    document.querySelector("#totalPrice").textContent = totalPrice;
+}
+
+if( cart = null || (cart = [])){
+    document.querySelector("h1").innerHTML = "<h1>Votre panier est vide</h1>"
+}else {
+    display();
+    deleteArticle(cart);//suppression article
+    quantityChange(cart);//changement quantité
+    quantityTotal();//calcul quantité total
+    priceTotal(cart);//calcul prix total
+}
 
 //verif panier
 function verifCart() {
@@ -141,24 +193,21 @@ function verifInput() {
     }
 }
 
-//écoute du formulaire, POST API et redirection page confirmation (améliorer fonction)
+//écoute du formulaire, POST API et redirection page confirmation 
 document.querySelector(".cart__order__form").addEventListener("submit",async function(e){
     e.preventDefault();
     if(verifCart() && verifInput() != false  ){
-        let result  = await fetch(`${module.urlApi}/order`, {   
+        module.fetchApi(`${module.urlApi}/order`, {   
             method:'POST',
             body:JSON.stringify({contact, products}),
             headers:{'Content-Type': 'application/json', 
             'Accept':'application/json'}
         })
-        let data = await result.json()
-        window.location.replace(`./confirmation.html?orderId=${data.orderId}`)
-        // result.catch(error => {console.log(error)});
+        .then(result => window.location.replace(`./confirmation.html?orderId=${result.orderId}`))
+        .catch(err => {   // exécute si erreur
+            document.querySelector('section').textContent =                         
+            "Oups... Désolé un problème est survenu, merci de réessayer plus tard";
+        })
     }
-    else{alert("error")}
+    else{alert("Veuillez vérifier votre panier et votre formulaire")}
 });
-
-
-
-
-
