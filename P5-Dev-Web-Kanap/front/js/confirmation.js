@@ -1,4 +1,7 @@
 const url = new URLSearchParams(location.search);
+//récupération de orderId dans l'url
 const orderId = url.get('orderId');
-document.querySelector("#orderId").innerHTML = orderId;//placement du numero de commande
-localStorage.clear();//après confirmation nettoyage du localstorage
+//placement du numero de commande
+document.querySelector("#orderId").innerHTML = orderId;
+//après confirmation nettoyage du localstorage
+localStorage.clear();

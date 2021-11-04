@@ -1,9 +1,8 @@
 import * as module from './module.js';
-let cart = JSON.parse(localStorage.getItem("cart"));// recuperation du panier
+// recuperation du panier
+let cart = JSON.parse(localStorage.getItem("cart"));
 let products = [];
 let contact = {};
-
-
 
 
 //creation des articles et placement

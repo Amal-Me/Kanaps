@@ -12,28 +12,33 @@ function getAndDisplayKanaps () {
 //affichage de tous les produits
 function displayListProducts (result) { 
     
-    result.forEach(prod => {       // boucle pour création html de chaque produit          
+    result.forEach(prod => {     
+        // boucle pour création html de chaque produit          
         let a              = document.createElement("a");               
         let article        = document.createElement("article");
         let img            = document.createElement("img");
         let h3             = document.createElement("h3");
         let p              = document.createElement("p");
 
-        a.setAttribute     ("href", "product.html?_id=" + prod._id);   //intégrer les attributs
+        //intégration des attributs
+        a.setAttribute     ("href", "product.html?_id=" + prod._id);   
         img.setAttribute   ("src", prod.imageUrl);
         img.setAttribute   ("alt", prod.altTxt);
         h3.setAttribute    ("class", "productName");
         p.setAttribute     ("class", "productDescription");
-                            
-        a.append           (article);   // positionnement des éléments HTML
+         
+        // positionnement des éléments HTML
+        a.append           (article);  
         article.append     (img);
         article.append     (h3);
         article.append     (p);
 
-        h3.textContent     = prod.name;                               //insertion de contenu
+        //insertion de contenu
+        h3.textContent     = prod.name;                               
         p.textContent      = prod.description;
 
-        document.getElementById('items').append(a);// placement du produit
+        // placement du produit
+        document.getElementById('items').append(a);
     })
 }
 
