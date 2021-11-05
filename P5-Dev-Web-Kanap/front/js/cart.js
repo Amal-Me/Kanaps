@@ -4,7 +4,6 @@ let cart = JSON.parse(localStorage.getItem("cart"));
 let products = [];
 let contact = {};
 
-
 //creation des articles et placement
 function display() {
     cart.forEach(product => {
@@ -84,7 +83,6 @@ function deleteArticle(cart) {
                 let indexDeleteItem = deleteItem.dataset.index;
                 cart.splice(indexDeleteItem, 1 );
                 localStorage.setItem("cart", JSON.stringify(cart)); 
-                cart = JSON.parse(localStorage.getItem("cart"));
                 location.reload();     
             })
         })(i);
@@ -125,15 +123,11 @@ function priceTotal(cart) {
     document.querySelector("#totalPrice").textContent = totalPrice;
 }
 
-if( cart = null || (cart = [])){
-    document.querySelector("h1").innerHTML = "<h1>Votre panier est vide</h1>"
-}else {
-    display();
-    deleteArticle(cart);//suppression article
-    quantityChange(cart);//changement quantité
-    quantityTotal();//calcul quantité total
-    priceTotal(cart);//calcul prix total
-}
+display();
+deleteArticle(cart);//suppression article
+quantityChange(cart);//changement quantité
+quantityTotal();//calcul quantité total
+priceTotal(cart);//calcul prix total
 
 //verif panier
 function verifCart() {
@@ -193,7 +187,7 @@ function verifInput() {
 }
 
 //écoute du formulaire, POST API et redirection page confirmation 
-document.querySelector(".cart__order__form").addEventListener("submit",async function(e){
+document.querySelector(".cart__order__form").addEventListener("submit", function(e){
     e.preventDefault();
     if(verifCart() && verifInput() != false  ){
         module.fetchApi(`${module.urlApi}/order`, {   
