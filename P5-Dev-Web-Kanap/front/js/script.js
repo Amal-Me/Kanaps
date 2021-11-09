@@ -3,7 +3,7 @@ let urlKanaps = module.urlApi;
 //appel API et affichage de tous les produits
 function getAndDisplayKanaps () {
     module.fetchApi(urlKanaps) 
-    .then(result => displayListProducts(result))     
+    .then(result => displayListProducts(result)) 
     .catch(() =>                   // exécute si erreur
         document.querySelector('section').innerHTML = 
         "<h2>Oups... Désolé un problème est survenu, merci de réessayer plus tard </h2>"
