@@ -1,6 +1,6 @@
-#Projet 5 - Construisez un site e-commerce en JavaScript "Kanap"
+# Projet 5 - Construisez un site e-commerce en JavaScript "Kanap"
 
-##Compétences évaluées
+## Compétences évaluées
 
     - Gestion des événements JavaScript
     - Création de pages dynamiques
